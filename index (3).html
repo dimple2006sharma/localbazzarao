@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LocalBazzarao – Flights, cabs & stays for Delhi</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f5fa;--card:#fff;--ink:#14172e;--mute:#5d6380;--line:#dde1ee;--brand:#1b1f3b;--on-brand:#fff;--gold:#f2a900;--prem:#7b3fa0;--norm:#b98300;--cheap:#1f6fd1;--bot:#e8ebf6;--me:#1b1f3b;--me-ink:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1022;--card:#181b36;--ink:#eceefb;--mute:#9aa0c4;--line:#2a2e52;--brand:#f2a900;--on-brand:#14172e;--bot:#20244a;--me:#f2a900;--me-ink:#14172e;--prem:#b987e0;--norm:#f2c14e;--cheap:#6aa6f5}}
+:root[data-theme="dark"]{--bg:#0e1022;--card:#181b36;--ink:#eceefb;--mute:#9aa0c4;--line:#2a2e52;--brand:#f2a900;--on-brand:#14172e;--bot:#20244a;--me:#f2a900;--me-ink:#14172e;--prem:#b987e0;--norm:#f2c14e;--cheap:#6aa6f5}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:Sora,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.hidden{display:none!important}
+/* auth */
+#auth{min-height:100%;display:grid;grid-template-columns:1fr 1fr}
+.hero{background:var(--brand);color:var(--on-brand);padding:48px;display:flex;flex-direction:column;justify-content:space-between}
+.logo{font-weight:700;font-size:22px;letter-spacing:-.02em}
+.hero h1{font-size:clamp(30px,4vw,48px);line-height:1.1;margin:0 0 16px;letter-spacing:-.03em;max-width:12em}
+.hero p{max-width:30em;opacity:.85;margin:0}
+.lines{display:flex;gap:8px;margin-top:28px}
+.lines span{height:8px;border-radius:4px;flex:1;max-width:90px}
+.formwrap{display:flex;align-items:center;justify-content:center;padding:32px}
+.box{width:100%;max-width:380px}
+.tabs{display:flex;border-bottom:2px solid var(--line);margin-bottom:22px}
+.tabs button{flex:1;background:none;border:0;padding:10px;cursor:pointer;color:var(--mute);font-weight:600;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--gold)}
+label{display:block;font-size:13px;font-weight:600;margin:14px 0 6px}
+input[type=text],input[type=email],input[type=password]{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+.btn{background:var(--brand);color:var(--on-brand);border:0;border-radius:10px;padding:12px 18px;font-weight:600;cursor:pointer}
+.btn.full{width:100%;margin-top:22px}
+.err{color:#c0392b;font-size:13px;min-height:20px;margin-top:10px}
+/* app */
+#app{height:100%;display:flex;flex-direction:column;max-width:1180px;margin:0 auto}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line)}
+header .who{display:flex;gap:10px;align-items:center;color:var(--mute);font-size:13px}
+.ghost{background:none;border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
+#thread{flex:1;overflow-y:auto;padding:20px 18px}
+.m{max-width:85%;margin:0 0 12px;padding:11px 15px;border-radius:16px;white-space:pre-wrap}
+.m.bot{background:var(--bot);border-bottom-left-radius:4px}
+.m.me{background:var(--me);color:var(--me-ink);margin-left:auto;border-bottom-right-radius:4px}
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:4px 0 16px}
+.tier{background:var(--card);border:1px solid var(--line);border-top:6px solid var(--c);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.tier h3{margin:0;font-size:15px;color:var(--c)}
+.tier .t{font-weight:600}
+.tier .d{color:var(--mute);font-size:13px}
+.tier .p{font-size:22px;font-weight:700;margin-top:auto;padding-top:8px}
+.tier .btn{margin-top:6px;background:var(--c);color:#fff}
+#dock{padding:8px 18px 0;display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 14px;cursor:pointer;font-size:13px}
+.chip:hover{border-color:var(--gold)}
+#bar{display:flex;gap:10px;padding:12px 18px 16px}
+#bar input{flex:1}
+#main{flex:1;min-height:0;display:grid;grid-template-columns:1fr 340px}
+#chat{display:flex;flex-direction:column;min-height:0}
+#side{border-left:1px solid var(--line);background:var(--card);overflow-y:auto;padding:16px}
+.tiers{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+select,input[type=date]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+.icons{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}
+.icon{border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:10px 2px;cursor:pointer;font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:4px}
+.icon span{font-size:24px}
+.icon[aria-pressed="true"]{border-color:var(--gold);box-shadow:inset 0 -3px 0 var(--gold)}
+#panel h2{font-size:17px;margin:0 0 4px}
+.hint{color:var(--mute);font-size:13px;margin:0 0 12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid .chip{border-radius:12px;padding:14px 8px;text-align:center}
+#mtabs{display:none}
+@keyframes fade{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+.m{animation:fade .25s}
+.tier{transition:transform .2s,box-shadow .2s}.tier:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(0,0,0,.15)}
+.dots i{display:inline-block;width:7px;height:7px;margin:0 2px;border-radius:50%;background:var(--mute);animation:blink 1s infinite}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,60%,100%{opacity:.3}30%{opacity:1}}
+.pc{position:relative;display:block;width:100%;aspect-ratio:4/3;border-radius:14px;overflow:hidden;border:0;padding:0;cursor:pointer;text-align:left;color:#fff;animation:fade .5s;transition:transform .2s,box-shadow .2s}
+div.pc{cursor:default}button.pc:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.pc .art,.pc img{position:absolute;inset:0;width:100%;height:100%}.pc img{object-fit:cover}.pc svg{width:100%;height:100%;display:block}
+.pc .cap{position:absolute;left:0;right:0;bottom:0;padding:22px 10px 8px;background:linear-gradient(transparent,rgba(0,0,0,.7));display:flex;flex-direction:column}
+.pc .cap b{font-size:13px}.pc .cap small{font-size:11px;opacity:.9;line-height:1.3}
+.slide{margin-top:24px;max-width:340px}.slide .pc{aspect-ratio:16/10}
+.prow{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,170px));gap:10px;margin:0 0 14px}
+.cf{position:fixed;top:-10px;font-size:20px;pointer-events:none;z-index:50;animation:fall 1.6s ease-in forwards}@keyframes fall{to{transform:translateY(105vh) rotate(540deg);opacity:.8}}
+#waBtn{position:fixed;right:16px;bottom:calc(88px + env(safe-area-inset-bottom,0px));width:54px;height:54px;border-radius:50%;border:0;background:#25d366;color:#fff;font-size:26px;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.3);z-index:40;transition:transform .2s}#waBtn:hover{transform:scale(1.08)}
+#wa{position:fixed;right:16px;bottom:calc(152px + env(safe-area-inset-bottom,0px));width:300px;max-width:calc(100vw - 32px);height:380px;max-height:calc(100% - 180px);display:flex;flex-direction:column;border-radius:14px;overflow:hidden;box-shadow:0 12px 32px rgba(0,0,0,.35);z-index:40;background:#efeae2;color:#111;animation:fade .2s}
+.wah{background:#075e54;color:#fff;display:flex;align-items:center;gap:10px;padding:10px 12px}.wah small{display:block;opacity:.8;font-size:11px}.wah button{margin-left:auto;background:none;border:0;color:#fff;cursor:pointer;font-size:16px}
+.av{width:34px;height:34px;border-radius:50%;background:#25d366;display:grid;place-items:center;font-weight:700;font-size:12px}
+#wam{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:6px}
+.wb{max-width:80%;padding:7px 10px;border-radius:8px;font-size:13px;line-height:1.4;box-shadow:0 1px 1px rgba(0,0,0,.15)}.wb.bot{background:#fff;align-self:flex-start}.wb.me{background:#d9fdd3;align-self:flex-end}.wb a{color:#0a7d4f;font-weight:600}
+#waq{display:flex;gap:6px;flex-wrap:wrap;padding:0 10px 8px}#waq button{border:1px solid #25d366;background:#fff;color:#075e54;border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer}
+.waf{display:flex;gap:6px;padding:8px;background:#f0f0f0}.waf input{flex:1;border:0;border-radius:20px;padding:8px 12px;font-size:13px;background:#fff;color:#111}.waf button{width:36px;border:0;border-radius:50%;background:#25d366;color:#fff;cursor:pointer}
+@media(prefers-reduced-motion:reduce){.pc,.m,#wa{animation:none}}
+#app{max-width:none;margin:0}
+#mtabs{display:none!important}
+#main{display:flex;flex-direction:column}
+#chat{flex:1;max-width:900px;width:100%;margin:0 auto}
+#side{flex:1;min-height:0;overflow-y:auto;padding:18px;border:0;background:transparent}
+#app[data-view="chat"] #side{display:none}
+#app[data-view="page"] #chat{display:none}
+#panel{max-width:1100px;margin:0 auto}
+#panel.formcard{max-width:460px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:10px}
+header{padding:12px 24px}
+#nav{display:flex;gap:4px;overflow-x:auto;padding:0 18px;background:#1b1f3b;scrollbar-width:none}
+#nav button{background:none;border:0;color:#fff;opacity:.75;padding:11px 14px;cursor:pointer;white-space:nowrap;font-weight:600;font-size:14px;border-bottom:3px solid transparent}
+#nav button:hover{opacity:1}#nav button[aria-current="true"]{opacity:1;border-color:var(--gold)}
+.hero2{position:relative;border-radius:18px;overflow:hidden;height:clamp(200px,32vw,320px);margin-bottom:22px}
+.hs{position:absolute;inset:0}
+.slide2{position:absolute!important;inset:0;width:100%!important;height:100%;aspect-ratio:auto;border-radius:0;opacity:0;transition:opacity .8s;animation:none}
+.slide2.on{opacity:1}.slide2:hover{transform:none!important;box-shadow:none!important}
+.ht{position:absolute;left:22px;top:20px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.45);pointer-events:none;z-index:2}
+.ht h1{margin:0 0 4px;font-size:clamp(22px,4vw,38px);letter-spacing:-.02em}.ht p{margin:0}
+.hd{position:absolute;right:16px;bottom:14px;display:flex;gap:6px;z-index:2}
+.hd button{width:10px;height:10px;border-radius:5px;border:0;background:rgba(255,255,255,.55);cursor:pointer;padding:0;transition:width .2s}.hd .on{background:#fff;width:22px}
+.intro h2{margin:0 0 2px}.intro .chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 22px}
+.row{margin:0 0 26px;scroll-margin-top:12px}.rh{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}.rh h2{margin:0;font-size:18px}.rh small{color:var(--mute)}
+.rw{position:relative}
+.rs{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:4px 2px 8px;-webkit-overflow-scrolling:touch}
+.rs::-webkit-scrollbar{display:none}
+.rs .pc{flex:0 0 clamp(190px,24vw,260px);width:auto;scroll-snap-align:start}
+.ar{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--card);box-shadow:0 2px 8px rgba(0,0,0,.2);cursor:pointer;font-size:22px;line-height:1}
+.ar.l{left:-10px}.ar.r{right:-10px}
+@media(max-width:860px){.ar{display:none}header{padding:10px 14px}}
+#splash{position:fixed;inset:0;z-index:100;overflow:hidden;background:linear-gradient(#fff6e6,#e8f1ff);color:#1b1f3b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;transition:opacity .6s}
+#splash.out{opacity:0}.sl{font-weight:700;font-size:28px;letter-spacing:-.02em}
+.strack{display:flex;gap:14px;width:max-content;animation:slidex 10s linear infinite}
+.strack .pc{width:190px;flex:none;filter:saturate(.55) brightness(1.12);animation:pop .6s both}
+@keyframes slidex{to{transform:translateX(-50%)}}@keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:.92;transform:none}}
+.sbar{width:220px;height:5px;border-radius:3px;background:#d9def0;overflow:hidden}.sbar i{display:block;height:100%;width:0;background:#f2a900;animation:fillb 2.6s ease forwards}@keyframes fillb{to{width:100%}}
+#chat{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:400px;max-width:calc(100vw - 32px);height:min(600px,calc(100% - 100px));margin:0;z-index:60;background:var(--bg);border:1px solid var(--line);border-radius:18px;box-shadow:0 16px 40px rgba(0,0,0,.35);overflow:hidden;display:none!important}
+#chat.open{display:flex!important;animation:fade .2s}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#1b1f3b;color:#fff}.ch button{background:none;border:0;color:#fff;font-size:16px;cursor:pointer}
+#planBtn{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:45;border:0;border-radius:999px;padding:13px 20px;background:var(--gold);color:#14172e;font-weight:700;font-size:15px;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.3);display:flex;gap:8px;align-items:center;animation:bob 2.4s ease-in-out infinite}
+#planBtn:hover{animation:none;transform:scale(1.05)}@keyframes bob{50%{transform:translateY(-4px)}}
+body.chatopen #planBtn,body.chatopen #waBtn,body.chatopen #wa{display:none!important}
+#side{padding-bottom:90px}.credit{font-size:12px;color:var(--mute);margin:6px 0 20px}
+@media(max-width:600px){#chat{right:0;bottom:0;width:100vw;max-width:100vw;height:100%;border-radius:0}}
+@media(prefers-reduced-motion:reduce){#planBtn{animation:none}}
+@media(max-width:860px){#mtabs{display:flex;border-bottom:1px solid var(--line)}#mtabs button{flex:1;background:none;border:0;padding:10px;font-weight:600;color:var(--mute);border-bottom:3px solid transparent;cursor:pointer}#mtabs button[aria-selected="true"]{color:var(--ink);border-color:var(--gold)}#main{grid-template-columns:1fr}#side{border-left:0}#app[data-view="chat"] #side{display:none}#app[data-view="book"] #chat{display:none}}
+@media(max-width:760px){#auth{grid-template-columns:1fr}.hero{padding:28px 24px;gap:20px}.tiers{grid-template-columns:1fr}.m{max-width:94%}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<section id="auth">
+  <div class="hero">
+    <div class="logo">LocalBazzarao</div>
+    <div>
+      <h1>One chat to book your Delhi trip.</h1>
+      <p>Flights, cabs and hotels in one place. For every route we show a premium, a normal and the cheapest way to get there, including the metro.</p>
+      <div id="slide" class="slide" aria-hidden="true"></div>
+      <div class="lines"><span style="background:#7b3fa0"></span><span style="background:#f2a900"></span><span style="background:#1f6fd1"></span></div>
+    </div>
+    <small style="opacity:.6">Demo build: prices are estimates.</small>
+  </div>
+  <div class="formwrap"><div class="box">
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tLogin" aria-selected="true">Log in</button>
+      <button role="tab" id="tReg" aria-selected="false">Create account</button>
+    </div>
+    <div id="nameRow" class="hidden"><label for="fn">Full name</label><input type="text" id="fn" autocomplete="name"></div>
+    <label for="em">Email</label><input type="email" id="em" autocomplete="email">
+    <label for="pw">Password</label><input type="password" id="pw" autocomplete="current-password">
+    <div class="err" id="err" role="alert"></div>
+    <button class="btn full" id="go">Log in</button>
+  </div></div>
+</section>
+
+<section id="app" class="hidden">
+  <header>
+    <div class="logo">LocalBazzarao</div>
+    <div class="who"><span id="uname"></span><button class="ghost" id="theme" aria-label="Toggle dark mode">🌙</button><button class="ghost" id="out">Log out</button></div>
+  </header>
+  <nav id="nav" aria-label="Sections"></nav>
+  <div id="mtabs" role="tablist"><button id="mtChat" aria-selected="true">Chat</button><button id="mtBook" aria-selected="false">Quick book</button></div>
+  <div id="main"><div id="chat">
+  <div class="ch"><b>✨ Plan my trip</b><button id="chatX" aria-label="Close chat">✕</button></div>
+  <div id="thread" aria-live="polite"></div>
+  <div id="dock"></div>
+  <div id="bar">
+    <input type="text" id="msg" placeholder="Type where you want to go…" aria-label="Message">
+    <button class="btn" id="send">Send</button>
+  </div>
+  </div>
+  <aside id="side" aria-label="Quick book"><div class="icons hidden" id="icons"></div><div id="panel"></div></aside>
+  <button id="planBtn" aria-label="Open trip planner chat"><span>💬</span> Plan my trip</button>
+  </div>
+</section>
+
+<div id="splash" class="hidden" aria-hidden="true"><div class="sl">LocalBazzarao</div><div class="strack" id="strack"></div><div class="sbar"><i></i></div><small>Getting Delhi ready for you…</small></div>
+<button id="waBtn" aria-label="Chat with Chotu">💬</button>
+<div id="wa" class="hidden" role="dialog" aria-label="Chotu support chat">
+  <div class="wah"><span class="av">LB</span><div><b>Chotu · LocalBazzarao</b><small>replies instantly</small></div><button id="waX" aria-label="Close chat">✕</button></div>
+  <div id="wam"></div><div id="waq"></div>
+  <div class="waf"><input type="text" id="wai" placeholder="Type a message" aria-label="Message Chotu"><button id="was" aria-label="Send">➤</button></div>
+</div>
+
+<script>
+/* ---------- storage (falls back to memory if blocked) ---------- */
+var mem={};
+function sget(k){try{var v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return mem[k]||null}}
+function sset(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){mem[k]=v}}
+function sdel(k){try{localStorage.removeItem(k)}catch(e){delete mem[k]}}
+var $=function(i){return document.getElementById(i)};
+
+/* ---------- auth (DEMO ONLY: replace with a real backend) ---------- */
+var mode="login";
+function setMode(m){mode=m;
+  $("tLogin").setAttribute("aria-selected",m==="login");$("tReg").setAttribute("aria-selected",m==="reg");
+  $("nameRow").classList.toggle("hidden",m==="login");
+  $("go").textContent=m==="login"?"Log in":"Create account";$("err").textContent="";}
+$("tLogin").onclick=function(){setMode("login")};$("tReg").onclick=function(){setMode("reg")};
+$("go").onclick=function(){
+  var em=$("em").value.trim().toLowerCase(),pw=$("pw").value,fn=$("fn").value.trim(),users=sget("dg_users")||{};
+  if(!/^\S+@\S+\.\S+$/.test(em)){$("err").textContent="Enter a valid email address.";return}
+  if(mode==="reg"){
+    if(!fn){$("err").textContent="Enter your name.";return}
+    if(pw.length<6){$("err").textContent="Password needs at least 6 characters.";return}
+    if(users[em]){$("err").textContent="This email is already registered. Log in instead.";return}
+    users[em]={name:fn,pw:pw};sset("dg_users",users);start({email:em,name:fn},true);
+  }else{
+    if(!users[em]||users[em].pw!==pw){$("err").textContent="Email or password is incorrect.";return}
+    start({email:em,name:users[em].name},true);
+  }
+};
+$("out").onclick=function(){sdel("dg_session");location.reload()};
+
+/* ---------- data ---------- */
+var R=function(a,b){return{lat:a,lng:b}};
+var ORIGINS=[
+ {n:"IGI Airport",k:["igi","airport","t3","indira"],c:R(28.5562,77.1000),m:"Airport (Airport Express)"},
+ {n:"New Delhi Station",k:["new delhi st","ndls","new delhi rail"],c:R(28.6425,77.2194),m:"New Delhi"},
+ {n:"Old Delhi Station",k:["old delhi","nzm","delhi junction"],c:R(28.6616,77.2276),m:"Chandni Chowk"},
+ {n:"Anand Vihar",k:["anand vihar","isbt"],c:R(28.6469,77.3159),m:"Anand Vihar"}
+];
+var PLACES=[
+ {n:"Connaught Place",k:["connaught","cp"],c:R(28.6315,77.2167),m:"Rajiv Chowk",f:1.15},
+ {n:"India Gate",k:["india gate","kartavya"],c:R(28.6129,77.2295),m:"Central Secretariat",f:1.2},
+ {n:"Red Fort",k:["red fort","lal qila"],c:R(28.6562,77.2410),m:"Lal Qila",f:1},
+ {n:"Qutub Minar",k:["qutub","kutub"],c:R(28.5245,77.1855),m:"Qutub Minar",f:1},
+ {n:"Hauz Khas",k:["hauz","hkv"],c:R(28.5494,77.2001),m:"Hauz Khas",f:1.05},
+ {n:"Akshardham",k:["akshardham"],c:R(28.6127,77.2773),m:"Akshardham",f:1},
+ {n:"Lotus Temple",k:["lotus"],c:R(28.5535,77.2588),m:"Kalkaji Mandir",f:1},
+ {n:"Chandni Chowk",k:["chandni"],c:R(28.6506,77.2303),m:"Chandni Chowk",f:.9},
+ {n:"Saket",k:["saket"],c:R(28.5245,77.2066),m:"Saket",f:1},
+ {n:"Cyber Hub Gurugram",k:["cyber","gurgaon","gurugram"],c:R(28.4950,77.0890),m:"Moulsari Avenue",f:1.1},
+ {n:"Jama Masjid",k:["jama","masjid"],c:R(28.6507,77.2334),m:"Jama Masjid",f:.9},
+ {n:"Humayun Tomb",k:["humayun"],c:R(28.5933,77.2507),m:"JLN Stadium",f:1},
+ {n:"Gurudwara Bangla Sahib",k:["bangla","gurudwara","gurdwara"],c:R(28.6264,77.2092),m:"Patel Chowk",f:1.1},
+ {n:"Lodhi Garden",k:["lodhi"],c:R(28.5933,77.2197),m:"Jor Bagh",f:1.1},
+ {n:"Dilli Haat",k:["dilli haat","haat"],c:R(28.5733,77.2090),m:"INA",f:1}
+];
+var CITIES=[
+ {n:"Mumbai",k:["mumbai","bombay"],p:4200,t:"2h 10m"},{n:"Bengaluru",k:["bengaluru","bangalore"],p:5200,t:"2h 45m"},
+ {n:"Kolkata",k:["kolkata","calcutta"],p:4800,t:"2h 20m"},{n:"Jaipur",k:["jaipur"],p:2800,t:"1h 05m"},
+ {n:"Hyderabad",k:["hyderabad"],p:4600,t:"2h 15m"},{n:"Chennai",k:["chennai","madras"],p:5600,t:"2h 50m"}
+];
+function find(list,t){t=t.toLowerCase();for(var i=0;i<list.length;i++)for(var j=0;j<list[i].k.length;j++)if(t.indexOf(list[i].k[j])>-1)return list[i];return null}
+function num(t,d){var m=t.match(/\d+/);return m?Math.max(1,+m[0]):d}
+function inr(n){return "₹"+Math.round(n).toLocaleString("en-IN")}
+function km(a,b){var r=Math.PI/180,dl=(b.lat-a.lat)*r,dn=(b.lng-a.lng)*r,
+  x=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dn/2)*Math.sin(dn/2);
+  return 6371*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))*1.35}
+
+/* ---------- conversation flows ---------- */
+var anyPlace=function(t){return find(ORIGINS,t)||find(PLACES,t)};
+var FLOWS={
+ ride:{steps:[
+  {key:"from",q:"Where are you starting from?",chips:ORIGINS.map(function(o){return o.n}),parse:anyPlace,bad:"I don’t know that spot yet. Pick a starting point from the options."},
+  {key:"to",q:"Where do you want to go in Delhi?",chips:PLACES.map(function(p){return p.n}),parse:function(t){return find(PLACES,t)},bad:"I can’t find that place. Try one of these popular spots."},
+  {key:"when",q:"When do you want to travel?",chips:["Now","Today evening","Tomorrow morning"],parse:function(t){return t}},
+  {key:"pax",q:"How many people are travelling?",chips:["1","2","3","4"],parse:function(t){return num(t,1)}}],
+  done:ride},
+ hotel:{steps:[
+  {key:"area",q:"Which area of Delhi do you want to stay in?",chips:PLACES.map(function(p){return p.n}),parse:function(t){return find(PLACES,t)},bad:"I can’t find that area. Pick one of these."},
+  {key:"checkin",q:"When do you want to check in?",chips:["Today","Tomorrow","This weekend"],parse:function(t){return t}},
+  {key:"nights",q:"How many nights?",chips:["1","2","3","5"],parse:function(t){return num(t,1)}},
+  {key:"guests",q:"How many guests?",chips:["1","2","3","4"],parse:function(t){return num(t,1)}}],
+  done:hotel},
+ flight:{steps:[
+  {key:"city",q:"Which city are you flying from? (Destination: Delhi, DEL)",chips:CITIES.map(function(c){return c.n}),parse:function(t){return find(CITIES,t)},bad:"I don’t have that city yet. Pick one of these."},
+  {key:"date",q:"What date do you want to fly?",chips:["Tomorrow","This weekend","Next week"],parse:function(t){return t}},
+  {key:"pax",q:"How many passengers?",chips:["1","2","3","4"],parse:function(t){return num(t,1)}}],
+  done:flight}
+};
+var flow=null,si=0,ans={},last=[],bookings=[],user=null;
+function hello(){return ["Not sure where to go?","Cab or metro to a place","Hotel in Delhi","Flight to Delhi","My bookings"]}
+
+function ride(a){
+  var d=km(a.from.c,a.to.c),p=a.pax,cars=Math.ceil(p/4);
+  var metroFare=d<=2?10:d<=5?20:d<=12?30:d<=21?40:d<=32?50:60;
+  var line=a.from.m+" → "+a.to.m+(a.from.n==="IGI Airport"?" (Airport Express, then change if needed)":"");
+  return {title:a.from.n+" → "+a.to.n+" · "+d.toFixed(0)+" km · "+p+" traveller"+(p>1?"s":"")+" · "+a.when,opts:[
+   {tier:"Premium",c:"var(--prem)",t:"Private sedan (Premier)",d:"Door to door, AC, driver waits. About "+Math.round(d*3+12)+" min in traffic.",p:(220+d*24)*cars},
+   {tier:"Normal",c:"var(--norm)",t:"Cab Mini / Auto",d:"App-booked cab. About "+Math.round(d*3.4+14)+" min in traffic.",p:(70+d*14)*(p>3?2:Math.ceil(p/3))},
+   {tier:"Cheapest",c:"var(--cheap)",t:"Delhi Metro + e-rickshaw",d:line+". About "+Math.round(d*2.3+25)+" min.",p:(metroFare+25)*p}]};
+}
+function hotel(a){var f=a.area.f,n=a.nights,r=Math.ceil(a.guests/2),mt=" Nearest metro: "+a.area.m+".";
+  return {title:"Stay near "+a.area.n+" · "+(a.checkin?"check-in "+a.checkin+" · ":"")+n+" night"+(n>1?"s":"")+" · "+a.guests+" guest"+(a.guests>1?"s":""),opts:[
+   {tier:"Premium",c:"var(--prem)",t:"5★ luxury hotel",d:"Pool, spa, breakfast included, free cancellation."+mt,p:9500*f*n*r},
+   {tier:"Normal",c:"var(--norm)",t:"3–4★ comfort hotel",d:"Clean AC rooms, Wi-Fi, breakfast available."+mt,p:3800*f*n*r},
+   {tier:"Cheapest",c:"var(--cheap)",t:"Budget stay / hostel",d:"Simple private room or dorm bed."+mt,p:1100*f*n*r}]};
+}
+function flight(a){var c=a.city,p=a.pax;
+  return {title:c.n+" → Delhi · "+a.date+" · "+p+" passenger"+(p>1?"s":""),opts:[
+   {tier:"Premium",c:"var(--prem)",t:"Full-service, flexible fare",d:c.t+", meals, 25 kg bags, free changes.",p:c.p*2.4*p},
+   {tier:"Normal",c:"var(--norm)",t:"Full-service, saver fare",d:c.t+", 15 kg bags, changes for a fee.",p:c.p*1.2*p},
+   {tier:"Cheapest",c:"var(--cheap)",t:"Low-cost carrier",d:c.t+", cabin bag only, pay for extras.",p:c.p*p}]};
+}
+
+/* ---------- chat UI ---------- */
+function add(txt,who){var d=document.createElement("div");d.className="m "+who;d.textContent=txt;$("thread").appendChild(d);scroll();return d}
+function scroll(){var t=$("thread");t.scrollTop=t.scrollHeight}
+function chips(list){var d=$("dock");d.innerHTML="";list.forEach(function(c){var b=document.createElement("button");b.className="chip";b.textContent=c;b.onclick=function(){say(c)};d.appendChild(b)})}
+function bot(txt,ch,delay){
+  var el=add("","bot");el.innerHTML="<span class='dots'><i></i><i></i><i></i></span>";$("dock").innerHTML="";
+  setTimeout(function(){el.textContent=txt;if(ch)chips(ch);scroll()},delay===undefined?450:delay)}
+function ask(){var s=FLOWS[flow].steps[si];bot(s.q,s.chips)}
+function cards(res){
+  var wrap=document.createElement("div");wrap.className="tiers";last=res.opts;
+  res.opts.forEach(function(o,i){var c=document.createElement("div");c.className="tier";c.style.setProperty("--c",o.c);
+    c.innerHTML="<h3></h3><div class='t'></div><div class='d'></div><div class='p'></div>";
+    c.children[0].textContent=o.tier;c.children[1].textContent=o.t;c.children[2].textContent=o.d;c.children[3].textContent=inr(o.p);
+    var b=document.createElement("button");b.className="btn";b.textContent="Book "+o.tier.toLowerCase();b.onclick=function(){book(i,res.title)};c.appendChild(b);wrap.appendChild(c)});
+  $("thread").appendChild(wrap);scroll()}
+function book(i,title){
+  var o=last[i],ref="DG"+Math.random().toString(36).slice(2,8).toUpperCase();
+  bookings.push({ref:ref,title:title,tier:o.tier,t:o.t,p:o.p});confetti();sset("dg_b_"+user.email,bookings);
+  add("Book "+o.tier.toLowerCase()+": "+o.t,"me");
+  bot("Booked! Reference "+ref+".\n"+title+"\n"+o.t+" · "+inr(o.p)+"\nWe sent the details to "+user.email+". (Demo: no real payment taken.)\n\nWhat else can I book for you?",hello());
+  flow=null}
+function reset(){flow=null;si=0;ans={}}
+function intent(t){t=t.toLowerCase();
+  if(/booking|my trips/.test(t))return "mine";
+  if(/not sure|don.t know|suggest|idea|explore|recommend|first time|new to|different vibe/.test(t))return "explore";
+  if(/hotel|stay|room|hostel/.test(t))return "hotel";
+  if(/flight|fly|plane|air ?ticket/.test(t))return "flight";
+  if(/cab|taxi|ola|uber|metro|ride|route|reach|visit|go to|tour|see|travel|drop|pickup/.test(t)||find(PLACES,t))return "ride";
+  return null}
+function startFlow(f,t){flow=f;si=0;ans={};
+  var s=FLOWS[f].steps;
+  if(t){ // pre-fill anything the user already said
+    var pl=find(PLACES,t);
+    if(f==="ride"&&pl){ans.to=pl;si=1;var o=find(ORIGINS,t);if(o){ans.from=o;si=2}else{ans.from=null;si=0;}}
+    if(f==="hotel"&&pl){ans.area=pl;si=1}
+    if(f==="flight"){var c=find(CITIES,t);if(c){ans.city=c;si=1}}
+  }
+  // for ride, if "to" was prefilled but not "from", ask from first
+  if(f==="ride"&&ans.to&&!ans.from){si=0}
+  ask()}
+function say(t){
+  t=t.trim();if(!t)return;add(t,"me");$("msg").value="";
+  if(/^(cancel|restart|start over|reset)$/i.test(t)){reset();bot("No problem, we’ll start fresh. What would you like to book?",hello());return}
+  var low=t.toLowerCase();
+  if(/^cab or metro/.test(low))t="cab";
+  if(!flow){
+    var it=intent(t);
+    if(it==="explore"){exploreAsk();return}
+    if(!it){var iv=interestOf(low);if(iv){showIdeas(iv);return}}
+    var pl0=find(PLACES,t);
+    if(it==="ride"&&pl0&&!/cab|taxi|metro|ride|route|reach|go to|drop|pickup|travel|visit|from/.test(low)){placeMenu(pl0);return}
+    if(it==="mine"){reset();
+      if(!bookings.length){bot("You have no bookings yet. Tell me where you’re headed and I’ll find options.",hello())}
+      else bot("Your bookings:\n"+bookings.map(function(b){return b.ref+" · "+b.tier+" · "+b.t+" · "+inr(b.p)+"\n   "+b.title}).join("\n"),hello());
+      return}
+    if(it){startFlow(it,t);return}
+    bot("I can book cabs and metro routes, hotels and flights for Delhi. Tell me where you want to go, for example “I want to visit Red Fort”.",hello());return}
+  var s=FLOWS[flow].steps[si],v=s.parse(t);
+  if(v===null||v===undefined||v===""){bot(s.bad||"I didn’t catch that. Could you rephrase?",s.chips);return}
+  ans[s.key]=v;si++;
+  var steps=FLOWS[flow].steps;
+  while(si<steps.length&&ans[steps[si].key])si++;
+  if(si<steps.length){ask();return}
+  var res=FLOWS[flow].done(ans);flow=null;present(res)}
+$("send").onclick=function(){say($("msg").value)};
+$("msg").addEventListener("keydown",function(e){if(e.key==="Enter")say($("msg").value)});
+
+/* ---------- discovery, quick-book panel ---------- */
+var BLURB={"Red Fort":"Mughal fort, evening sound and light show","Qutub Minar":"13th-century minaret, about 72 m tall","India Gate":"War memorial, lovely at sunset","Connaught Place":"Colonial-era circle of cafes and shops","Hauz Khas":"Lake, ruins and trendy cafes","Akshardham":"Huge temple complex with an evening water show","Lotus Temple":"Calm lotus-shaped temple, free entry","Chandni Chowk":"Old Delhi lanes: parathas, chaat and bazaars","Saket":"Malls and Select Citywalk","Cyber Hub Gurugram":"Restaurants and bars in Gurugram","Jama Masjid":"Grand Mughal mosque at the heart of Old Delhi","Humayun Tomb":"Garden tomb that came before the Taj Mahal","Gurudwara Bangla Sahib":"Peaceful gurdwara with a golden dome and free langar","Lodhi Garden":"Green park with old tombs, perfect for a walk","Dilli Haat":"Crafts and regional food stalls from across India"};
+var ILABEL={history:"History & monuments",food:"Food & street food",shopping:"Shopping & markets",spiritual:"Temples & spiritual",nightlife:"Nightlife & cafes",family:"Family fun"};
+var IDEAS={history:["Red Fort","Qutub Minar","India Gate","Humayun Tomb","Jama Masjid"],food:["Chandni Chowk","Connaught Place","Dilli Haat","Hauz Khas","Saket"],shopping:["Connaught Place","Chandni Chowk","Dilli Haat","Saket","Cyber Hub Gurugram"],spiritual:["Akshardham","Lotus Temple","Gurudwara Bangla Sahib","Jama Masjid","Chandni Chowk"],nightlife:["Hauz Khas","Cyber Hub Gurugram","Connaught Place","Saket","India Gate"],family:["Akshardham","India Gate","Lodhi Garden","Saket","Dilli Haat"]};
+function interestOf(t){return /histor|heritage|monument/.test(t)?"history":/food|eat|restaurant/.test(t)?"food":/shop|market/.test(t)?"shopping":/temple|spirit|relig/.test(t)?"spiritual":/night|party|club|cafe/.test(t)?"nightlife":/family|kids|child/.test(t)?"family":null}
+function exploreAsk(){bot("No problem, let’s find something you’ll enjoy. What kind of trip are you after?",Object.keys(ILABEL).map(function(k){return ILABEL[k]}))}
+function showIdeas(k){var l=IDEAS[k];bot("Top picks for "+ILABEL[k].toLowerCase()+":\n"+l.map(function(n){return "• "+n+": "+BLURB[n]}).join("\n")+"\n\nPick one and I’ll help you get there and find a stay.",l.concat(["Show a different vibe"]));thumbs(l)}
+function placeMenu(p){bot("Good choice! "+p.n+": "+BLURB[p.n]+".\nWhat would you like to book?",["Cab to "+p.n,"Hotel near "+p.n,"Flight to Delhi"]);thumbs([p.n])}
+function present(res){bot("Here are 3 ways to do it for "+res.title+":",null);setTimeout(function(){cards(res);bot("Tap a card to book, or tell me what else you need.",hello(),300)},560)}
+function setView(v){$("app").setAttribute("data-view","page");if(v==="chat")chatOpen(true);markNav(curTab)}
+$("mtChat").onclick=function(){setView("chat")};$("mtBook").onclick=function(){setView("book")};
+function fmt(v){if(!v)return "Today";return new Date(v+"T00:00:00").toLocaleDateString("en-IN",{day:"numeric",month:"short"})}
+function opt(l){return l.map(function(x){return "<option>"+x.n+"</option>"}).join("")}
+function nums(a,b){var s="";for(var i=a;i<=b;i++)s+="<option>"+i+"</option>";return s}
+function sel(id,lb,h){return "<label for='"+id+"'>"+lb+"</label><select id='"+id+"'>"+h+"</select>"}
+function dt(id,lb,d){return "<label for='"+id+"'>"+lb+"</label><input type='date' id='"+id+"' min='"+d+"' value='"+d+"'>"}
+function byName(l,v){return l.filter(function(x){return x.n===v})[0]}
+function quick(sum,res){reset();setView("chat");add(sum,"me");present(res)}
+var TABS=[["explore","🧭","Explore"],["flight","✈️","Flights"],["hotel","🏨","Hotels"],["cab","🚕","Cabs"]];
+function renderPanel(tab){
+  var ic=$("icons");ic.innerHTML="";
+  TABS.forEach(function(t){var b=document.createElement("button");b.className="icon";b.setAttribute("aria-pressed",t[0]===tab);b.innerHTML="<span>"+t[1]+"</span>"+t[2];b.onclick=function(){renderPanel(t[0])};ic.appendChild(b)});
+  var p=$("panel"),today=new Date().toISOString().slice(0,10),go="<button class='btn full' id='go2'>See 3 options</button>";p.className="formcard";
+  if(tab==="explore"){
+    p.innerHTML="<h2>Not sure where to go?</h2><p class='hint'>Pick what you enjoy and we’ll suggest places in Delhi.</p><div class='grid'></div>";
+    Object.keys(ILABEL).forEach(function(k){var b=document.createElement("button");b.className="chip";b.textContent=ILABEL[k];b.onclick=function(){setView("chat");say(ILABEL[k])};p.lastChild.appendChild(b)});
+    var h=document.createElement("h2");h.textContent="Popular places";h.style.margin="18px 0 10px";p.appendChild(h);p.appendChild(placeGrid(PLACES.map(function(x){return x.n})));
+  }else if(tab==="flight"){
+    p.innerHTML="<h2>Flights to Delhi</h2><p class='hint'>Premium, normal and cheapest fares.</p>"+sel("f1","From",opt(CITIES))+dt("f2","Date",today)+sel("f3","Passengers",nums(1,6))+go;
+    $("go2").onclick=function(){var c=byName(CITIES,$("f1").value),d=fmt($("f2").value);quick("Flight: "+c.n+" → Delhi, "+d,flight({city:c,date:d,pax:+$("f3").value}))};
+  }else if(tab==="metro"){
+    p.innerHTML="<h2>Delhi Metro</h2><p class='hint'>Cheap, and often faster than a cab in traffic.</p>"+sel("m1","From",opt(ORIGINS)+opt(PLACES))+sel("m2","To",opt(PLACES))+sel("m3","Travellers",nums(1,6))+"<div class='err' id='cerr' role='alert'></div>"+go.replace("See 3 options","Show metro route");
+    $("go2").onclick=function(){var f=byName(ORIGINS.concat(PLACES),$("m1").value),t=byName(PLACES,$("m2").value);
+      if(f===t){$("cerr").textContent="Pick a different start and end point.";return}
+      var r=ride({from:f,to:t,when:"Metro",pax:+$("m3").value});quick("Metro: "+f.n+" → "+t.n,{title:r.title,opts:[r.opts[2]]})};
+  }else if(tab==="hotel"){
+    p.innerHTML="<h2>Hotels in Delhi</h2><p class='hint'>Choose an area; we show the nearest metro too.</p>"+sel("h1","Area",opt(PLACES))+dt("h2","Check-in",today)+sel("h3","Nights",nums(1,7))+sel("h4","Guests",nums(1,6))+go;
+    $("go2").onclick=function(){var a=byName(PLACES,$("h1").value),d=fmt($("h2").value),n=+$("h3").value,g=+$("h4").value;quick("Hotel near "+a.n+", check-in "+d+", "+n+" night(s)",hotel({area:a,checkin:d,nights:n,guests:g}))};
+  }else{
+    p.innerHTML="<h2>Cabs & metro</h2><p class='hint'>Compare a private cab, a normal cab and the metro.</p>"+sel("c1","From",opt(ORIGINS)+opt(PLACES))+sel("c2","To",opt(PLACES))+sel("c3","When","<option>Now</option><option>Today evening</option><option>Tomorrow morning</option>")+sel("c4","Passengers",nums(1,6))+"<div class='err' id='cerr' role='alert'></div>"+go;
+    $("go2").onclick=function(){var f=byName(ORIGINS.concat(PLACES),$("c1").value),t=byName(PLACES,$("c2").value);
+      if(f===t){$("cerr").textContent="Pick a different start and end point.";return}
+      quick("Ride: "+f.n+" → "+t.n,ride({from:f,to:t,when:$("c3").value,pax:+$("c4").value}))};
+  }
+}
+/* ---------- place art, slideshow, confetti, theme, Chotu chat ---------- */
+/* Real photos: put files like images/red-fort.jpg next to index.html; they cover the drawings automatically. */
+var P="M100 124C80 104 80 74 100 52C120 74 120 104 100 124z";
+var SC={
+ gate:{bg:"linear-gradient(#ff9a5a,#f9d38a)",svg:"<circle cx='150' cy='45' r='16' fill='#fff3c4'/><rect y='120' width='200' height='30' fill='#4c7a3f'/><rect x='64' y='36' width='72' height='10' fill='#b98a5e'/><rect x='70' y='46' width='60' height='74' fill='#d1a577'/><path d='M88 120V82a12 12 0 0 1 24 0v38z' fill='#5a3a2a'/>"},
+ fort:{bg:"linear-gradient(#f6b98a,#fde7c8)",svg:"<rect y='122' width='200' height='28' fill='#8a8f5a'/><rect x='14' y='70' width='172' height='52' fill='#b5412f'/><g fill='#c9553f'><rect x='14' y='64' width='10' height='8'/><rect x='34' y='64' width='10' height='8'/><rect x='54' y='64' width='10' height='8'/><rect x='136' y='64' width='10' height='8'/><rect x='156' y='64' width='10' height='8'/><rect x='176' y='64' width='10' height='8'/></g><rect x='80' y='52' width='40' height='70' fill='#a13626'/><path d='M80 52a20 14 0 0 1 40 0z' fill='#f2e3c2'/><path d='M92 122V96a8 8 0 0 1 16 0v26z' fill='#3b1a14'/><circle cx='100' cy='36' r='3' fill='#f2e3c2'/>"},
+ minar:{bg:"linear-gradient(#8ec5e8,#d9f0fb)",svg:"<ellipse cx='40' cy='40' rx='20' ry='7' fill='#fff' opacity='.8'/><rect y='122' width='200' height='28' fill='#6f9a52'/><polygon points='90,22 110,22 118,122 82,122' fill='#c96a3b'/><g fill='#a8532b'><rect x='88' y='50' width='24' height='4'/><rect x='85' y='80' width='30' height='4'/><rect x='83' y='105' width='34' height='4'/></g><rect x='92' y='14' width='16' height='8' fill='#e0c59a'/>"},
+ temple:{bg:"linear-gradient(#b9a8ee,#f6e9ff)",svg:"<rect y='124' width='200' height='26' fill='#5aa0b8'/><g fill='#fff' stroke='#cdbbec' stroke-width='1'>"+[-72,72,-38,38,0].map(function(a){return "<path transform='rotate("+a+" 100 124)' d='"+P+"'/>"}).join("")+"</g>"},
+ bazaar:{bg:"linear-gradient(#ffcf70,#ffb199)",svg:"<rect y='122' width='200' height='28' fill='#7a5a45'/><path d='M0 30Q100 60 200 30' stroke='#5a3a2a' fill='none'/><circle cx='30' cy='40' r='6' fill='#ffd24a'/><circle cx='65' cy='48' r='6' fill='#e8423a'/><circle cx='100' cy='52' r='6' fill='#ffd24a'/><circle cx='135' cy='48' r='6' fill='#e8423a'/><circle cx='170' cy='40' r='6' fill='#ffd24a'/><rect x='14' y='84' width='72' height='38' fill='#f3dcc0'/><rect x='10' y='70' width='80' height='14' fill='#d64545'/><rect x='114' y='94' width='72' height='28' fill='#f3dcc0'/><rect x='110' y='80' width='80' height='14' fill='#2f8f6b'/>"},
+ city:{bg:"linear-gradient(#4b5fd6,#a9b6ff)",svg:"<circle cx='160' cy='30' r='10' fill='#fff7d6'/><g fill='#1f2a6b'><rect x='10' y='80' width='30' height='70'/><rect x='46' y='55' width='26' height='95'/><rect x='78' y='90' width='34' height='60'/><rect x='118' y='45' width='28' height='105'/><rect x='152' y='72' width='34' height='78'/></g><g fill='#ffd86b'><rect x='18' y='92' width='5' height='6'/><rect x='28' y='92' width='5' height='6'/><rect x='54' y='68' width='5' height='6'/><rect x='54' y='84' width='5' height='6'/><rect x='86' y='104' width='5' height='6'/><rect x='98' y='104' width='5' height='6'/><rect x='126' y='60' width='5' height='6'/><rect x='134' y='76' width='5' height='6'/><rect x='160' y='88' width='5' height='6'/><rect x='172' y='104' width='5' height='6'/></g>"}
+};
+var PSCENE={"India Gate":"gate","Red Fort":"fort","Qutub Minar":"minar","Lotus Temple":"temple","Akshardham":"temple","Chandni Chowk":"bazaar","Jama Masjid":"fort","Humayun Tomb":"fort","Gurudwara Bangla Sahib":"temple","Lodhi Garden":"minar","Dilli Haat":"bazaar"};
+function placeCard(n,fn,big){
+  var sc=SC[PSCENE[n]||"city"],e=document.createElement(fn?"button":"div");e.className="pc";
+  e.innerHTML="<div class='art' style='background:"+sc.bg+"'><svg viewBox='0 0 200 150' preserveAspectRatio='xMidYMax slice'>"+sc.svg+"</svg></div><img alt='' data-n='"+n+"' data-s='"+(big?960:500)+"' src='images/"+n.toLowerCase().replace(/ /g,"-")+".jpg' onerror='photoFallback(this)'><div class='cap'><b></b><small></small></div>";
+  e.querySelector("b").textContent=n;e.querySelector("small").textContent=BLURB[n]||"";
+  if(fn)e.onclick=fn;return e}
+function placeGrid(list){var g=document.createElement("div");g.className="prow";list.forEach(function(n){g.appendChild(placeCard(n,function(){setView("chat");say(n)}))});return g}
+function thumbs(list){$("thread").appendChild(placeGrid(list));scroll()}
+var si2=0;
+function drawSlide(){var n=PLACES[si2%PLACES.length].n;$("slide").innerHTML="";$("slide").appendChild(placeCard(n,null))}
+drawSlide();if(!matchMedia("(prefers-reduced-motion:reduce)").matches)setInterval(function(){si2++;drawSlide()},3500);
+function confetti(){if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;var E=["🎉","🚇","✈️","🏨","⭐"];for(var i=0;i<26;i++){var s=document.createElement("span");s.className="cf";s.textContent=E[i%5];s.style.left=Math.random()*100+"vw";s.style.animationDelay=Math.random()*.6+"s";document.body.appendChild(s);setTimeout(s.remove.bind(s),2600)}}
+$("theme").onclick=function(){var d=document.documentElement,cur=d.getAttribute("data-theme"),dark=cur==="dark"||(!cur&&matchMedia("(prefers-color-scheme:dark)").matches);d.setAttribute("data-theme",dark?"light":"dark");$("theme").textContent=dark?"🌙":"☀️"};
+var WA_NUMBER="919999999999"; /* put your real WhatsApp number here, with country code */
+function waAdd(t,w,link){var d=document.createElement("div");d.className="wb "+w;d.textContent=t;if(link){d.appendChild(document.createElement("br"));var a=document.createElement("a");a.href="https://wa.me/"+WA_NUMBER+"?text="+encodeURIComponent("Hi LocalBazzarao, I need help");a.target="_blank";a.rel="noopener";a.textContent="Open WhatsApp";d.appendChild(a)}$("wam").appendChild(d);$("wam").scrollTop=1e5}
+function waSay(t){t=t.trim();if(!t)return;waAdd(t,"me");$("wai").value="";var l=t.toLowerCase(),r,link=false;
+  if(/refund|cancel/.test(l))r="Cancellation rules depend on the hotel, cab and airline. Send your booking reference (like DG4X9K2A) and our team will check it.";
+  else if(/metro|timing/.test(l))r="Delhi Metro roughly runs from 5–6 am to 11 pm, and Airport Express has its own timings. Please check DMRC for exact times.";
+  else if(/fare|price|cost/.test(l))r="Prices on the site are estimates. Final fares can change with traffic, dates and availability.";
+  else if(/human|agent|call|talk|whatsapp/.test(l)){r="Sure! Tap below to chat with our team on WhatsApp.";link=true}
+  else if(/^(hi|hello|hey|namaste)/.test(l))r="Namaste! 🙏 How can I help you today?";
+  else{r="Thanks! For anything else, our team is a tap away on WhatsApp.";link=true}
+  setTimeout(function(){waAdd(r,"bot",link)},600)}
+$("waBtn").onclick=function(){var w=$("wa");w.classList.toggle("hidden");if(w.classList.contains("hidden"))return;
+  if(!$("wam").children.length){waAdd("Hi! 👋 I’m Chotu, the LocalBazzarao helper. Ask me about bookings, cancellations or the metro, or tap a quick reply.","bot");
+    ["Cancel / refund","Metro timings","Fares","Talk to a human"].forEach(function(q){var b=document.createElement("button");b.textContent=q;b.onclick=function(){waSay(q)};$("waq").appendChild(b)})}
+  $("wai").focus()};
+$("waX").onclick=function(){$("wa").classList.add("hidden")};
+$("was").onclick=function(){waSay($("wai").value)};$("wai").addEventListener("keydown",function(e){if(e.key==="Enter")waSay($("wai").value)});
+/* ---------- home page (Amazon/Netflix style), top tabs, loading splash ---------- */
+var reduced=matchMedia("(prefers-reduced-motion:reduce)").matches;
+var NAV=[["explore","🧭","Explore"],["flight","✈️","Flights"],["hotel","🏨","Hotels"],["cab","🚕","Cabs"],["metro","🚇","Metro"]];
+var curTab="explore";
+function markNav(t){var n=$("nav");if(!n)return;[].forEach.call(n.children,function(b){b.setAttribute("aria-current",b.dataset.t===t)})}
+function buildNav(){var n=$("nav");n.innerHTML="";NAV.forEach(function(x){var b=document.createElement("button");b.dataset.t=x[0];b.textContent=x[1]+" "+x[2];b.onclick=function(){go(x[0])};n.appendChild(b)})}
+function go(t){if(t==="chat"){setView("chat");return}curTab=t;setView("page");$("side").scrollTop=0;if(t==="explore")renderHome();else renderPanel(t)}
+var RLABEL={history:"🏛️ History & monuments",food:"🍜 Food & street food",shopping:"🛍️ Shopping & markets",spiritual:"🛕 Temples & spiritual",nightlife:"🌃 Nightlife & cafes",family:"👨‍👩‍👧 Family fun"};
+function rowEl(k){
+  var w=document.createElement("section");w.className="row";w.id="row-"+k;
+  w.innerHTML="<div class='rh'><h2></h2><small>Swipe or tap the arrows</small></div><div class='rw'><button class='ar l' aria-label='Previous'>‹</button><div class='rs'></div><button class='ar r' aria-label='Next'>›</button></div>";
+  w.querySelector("h2").textContent=RLABEL[k];
+  var s=w.querySelector(".rs"),paused=false;
+  IDEAS[k].forEach(function(n){s.appendChild(placeCard(n,function(){setView("chat");say(n)}))});
+  function step(d){s.scrollBy({left:d*(s.firstChild.offsetWidth+14),behavior:"smooth"})}
+  w.querySelector(".l").onclick=function(){step(-1)};w.querySelector(".r").onclick=function(){step(1)};
+  ["mouseenter","touchstart","focusin"].forEach(function(e){s.addEventListener(e,function(){paused=true},{passive:true})});
+  ["mouseleave","touchend","focusout"].forEach(function(e){s.addEventListener(e,function(){paused=false},{passive:true})});
+  var id=setInterval(function(){if(!document.body.contains(w)){clearInterval(id);return}
+    if(paused||reduced||$("app").getAttribute("data-view")!=="page")return;
+    if(s.scrollLeft+s.clientWidth>=s.scrollWidth-4)s.scrollTo({left:0,behavior:"smooth"});else step(1)},3200+Math.random()*1200);
+  return w}
+function heroEl(){
+  var w=document.createElement("section");w.className="hero2";var names=["Red Fort","India Gate","Qutub Minar","Lotus Temple","Chandni Chowk"],i=0,sx=0;
+  w.innerHTML="<div class='hs'></div><div class='hd'></div><div class='ht'><h1>Discover Delhi your way</h1><p>Flights, hotels, cabs and metro in one place.</p></div>";
+  var hs=w.querySelector(".hs"),hd=w.querySelector(".hd");
+  function show(k){i=k;[].forEach.call(hs.children,function(c,j){c.classList.toggle("on",j===k)});[].forEach.call(hd.children,function(d,j){d.classList.toggle("on",j===k)})}
+  names.forEach(function(n,k){var c=placeCard(n,function(){setView("chat");say(n)},true);c.classList.add("slide2");if(!k)c.classList.add("on");hs.appendChild(c);
+    var d=document.createElement("button");d.setAttribute("aria-label","Slide "+(k+1));if(!k)d.className="on";d.onclick=function(){show(k)};hd.appendChild(d)});
+  w.addEventListener("touchstart",function(e){sx=e.touches[0].clientX},{passive:true});
+  w.addEventListener("touchend",function(e){var dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40)show((i+(dx<0?1:names.length-1))%names.length)});
+  var id=setInterval(function(){if(!document.body.contains(w)){clearInterval(id);return}if(!reduced)show((i+1)%names.length)},3500);
+  return w}
+function renderHome(){
+  var p=$("panel");p.className="";p.innerHTML="";p.appendChild(heroEl());
+  var h=document.createElement("div");h.className="intro";h.innerHTML="<h2>Pick what you enjoy</h2><p class='hint'>Pick what you enjoy and we’ll suggest places in Delhi.</p><div class='chips'></div>";
+  Object.keys(RLABEL).forEach(function(k){var b=document.createElement("button");b.className="chip";b.textContent=RLABEL[k];b.onclick=function(){$("row-"+k).scrollIntoView({behavior:reduced?"auto":"smooth",block:"start"})};h.lastChild.appendChild(b)});
+  p.appendChild(h);Object.keys(RLABEL).forEach(function(k){p.appendChild(rowEl(k))});
+  var cr=document.createElement("p");cr.className="credit";cr.textContent="Photos: Wikipedia / Wikimedia Commons, by various authors under open licences. Photos you add to the images folder are used first.";p.appendChild(cr)}
+/* ---------- real monument photos (from Wikipedia, with drawn fallback) + floating trip chat ---------- */
+var WT={"Red Fort":"Red_Fort","India Gate":"India_Gate","Qutub Minar":"Qutb_Minar","Lotus Temple":"Lotus_Temple","Chandni Chowk":"Chandni_Chowk","Akshardham":"Akshardham_(Delhi)","Jama Masjid":"Jama_Masjid,_Delhi","Humayun Tomb":"Humayun's_Tomb","Gurudwara Bangla Sahib":"Gurudwara_Bangla_Sahib","Lodhi Garden":"Lodhi_Gardens","Dilli Haat":"Dilli_Haat","Connaught Place":"Connaught_Place,_New_Delhi","Hauz Khas":"Hauz_Khas_Village","Saket":"Select_Citywalk","Cyber Hub Gurugram":"Cyber_Hub"};
+var PH={},PQ={};
+function sized(u,s){return u&&u.replace(/\/\d+px-/,"/"+s+"px-")}
+function getPhoto(n,s,cb){
+  if(PH[n]!==undefined){cb(sized(PH[n],s),PH[n]);return}
+  (PQ[n]=PQ[n]||fetch("https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(WT[n]||n)).then(function(r){return r.ok?r.json():null}).then(function(d){return d&&d.thumbnail?d.thumbnail.source:null}).catch(function(){return null})).then(function(u){PH[n]=u;cb(sized(u,s),u)})}
+function photoFallback(img){var w=img.dataset.w;
+  if(!w){img.dataset.w="1";getPhoto(img.dataset.n,+img.dataset.s,function(u,raw){img.dataset.raw=raw||"";if(u)img.src=u;else img.remove()});return}
+  if(w==="1"&&img.dataset.raw){img.dataset.w="2";img.src=img.dataset.raw;return}
+  img.remove()}
+function chatOpen(o){$("chat").classList.toggle("open",o);document.body.classList.toggle("chatopen",o);if(o){$("msg").focus();scroll()}}
+$("planBtn").onclick=function(){chatOpen(true)};
+$("chatX").onclick=function(){chatOpen(false)};
+function splash(){var s=$("splash"),t=$("strack"),names=PLACES.map(function(p){return p.n});t.innerHTML="";
+  names.concat(names).forEach(function(n,i){var c=placeCard(n,null);c.style.animationDelay=(i%names.length)*.1+"s";t.appendChild(c)});
+  s.classList.remove("hidden","out");setTimeout(function(){s.classList.add("out")},2600);setTimeout(function(){s.classList.add("hidden")},3200)}
+function start(u,fresh){
+  user=u;sset("dg_session",u);bookings=sget("dg_b_"+u.email)||[];
+  $("auth").classList.add("hidden");$("app").classList.remove("hidden");if(fresh)splash();
+  $("uname").textContent=u.name;$("thread").innerHTML="";buildNav();go("explore");
+  bot("Namaste, "+u.name.split(" ")[0]+"! Where do you want to go in Delhi? Tell me your plan, tap an option below, or use the quick-book panel for flights, hotels and cabs. Not sure where to go? Just say so and I’ll suggest places.",hello(),200);
+  $("msg").focus()}
+var s=sget("dg_session");if(s&&s.email)start(s);
+</script>
+</body>
+</html>
